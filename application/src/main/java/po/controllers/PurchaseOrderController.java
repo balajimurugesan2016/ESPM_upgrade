@@ -1,6 +1,7 @@
 package po.controllers;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
+import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.datamodel.odata.client.exception.ODataServiceErrorException;
 import com.sap.cloud.sdk.datamodel.odata.helper.ModificationResponse;
 import com.sap.cloud.sdk.s4hana.connectivity.ErpHttpDestination;
@@ -26,6 +27,13 @@ public class PurchaseOrderController {
 
 	@Autowired
 	ErpHttpDestination erphttpdestination;
+
+	@Autowired
+	DefaultPurchaseOrderService defaultPurchaseOrderService;
+
+	@Autowired
+	ResilienceConfiguration resilienceConfiguration;
+
 	private static final Logger logger = LoggerFactory.getLogger(PurchaseOrderController.class);
 
 	@RequestMapping(path = "/purchaseorder", method = RequestMethod.POST)
@@ -35,11 +43,11 @@ public class PurchaseOrderController {
 
 			logger.info("Before Modify");
 
-			ModificationResponse<PurchaseOrder> po = new DefaultPurchaseOrderService()
-					.createPurchaseOrder(purchaseorder).executeRequest(erphttpdestination);
+			ModificationResponse<PurchaseOrder> po = defaultPurchaseOrderService.createPurchaseOrder(purchaseorder)
+					.executeRequest(erphttpdestination);
 			PurchaseOrder purchaseorderoutput = po.getResponseEntity().get();
 
-			logger.info("After Modify{}", purchaseorderoutput);
+			logger.info("After Modify,{}", purchaseorderoutput);
 
 			return new ResponseEntity<PurchaseOrder>(purchaseorderoutput, HttpStatus.CREATED);
 		} catch (DestinationAccessException destinationaccessexception) {
@@ -65,12 +73,16 @@ public class PurchaseOrderController {
 	public @ResponseBody ResponseEntity<PurchaseOrder> getpurchaseorder(@RequestParam String purchaseorderid) {
 
 		try {
+
 			logger.info("Before Fetch");
-			PurchaseOrder receivedpurchaseorder = new DefaultPurchaseOrderService()
-					.getPurchaseOrderByKey(purchaseorderid).executeRequest(erphttpdestination);
-			logger.info("After fetch {}", receivedpurchaseorder);
+			PurchaseOrder receivedpurchaseorder = defaultPurchaseOrderService.getPurchaseOrderByKey(purchaseorderid)
+					.executeRequest(erphttpdestination);
+			logger.info("After fetch {}",receivedpurchaseorder);
+
 			return ResponseEntity.ok(receivedpurchaseorder);
-		} catch (DestinationAccessException destinationaccessexception) {
+		}
+
+		catch (DestinationAccessException destinationaccessexception) {
 			logger.error(destinationaccessexception.getMessage(), destinationaccessexception);
 
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -83,12 +95,10 @@ public class PurchaseOrderController {
 					odataServiceErrorException);
 
 		} catch (Exception exception) {
-
-			logger.error(exception.getLocalizedMessage());
-
-			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, exception.getLocalizedMessage(),
-					exception);
+			logger.error(exception.getMessage(), exception);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 
 		}
 	}
+
 }
