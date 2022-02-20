@@ -20,86 +20,75 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-
-
 @RestController
 @RequestMapping("/materialsmanagement")
 public class PurchaseOrderController {
 
-    @Autowired
-    ErpHttpDestination erphttpdestination;
-    private static final Logger logger = LoggerFactory.getLogger(PurchaseOrderController.class);
+	@Autowired
+	ErpHttpDestination erphttpdestination;
+	private static final Logger logger = LoggerFactory.getLogger(PurchaseOrderController.class);
 
-    @RequestMapping(path = "/purchaseorder", method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<PurchaseOrder> postpurchaseorder(@RequestBody  PurchaseOrder purchaseorder) {
+	@RequestMapping(path = "/purchaseorder", method = RequestMethod.POST)
+	public @ResponseBody ResponseEntity<PurchaseOrder> postpurchaseorder(@RequestBody PurchaseOrder purchaseorder) {
 
-    	try {
-    		
-        logger.info("Before Modify");
-    	
-    	ModificationResponse<PurchaseOrder> po = new DefaultPurchaseOrderService()
-                .createPurchaseOrder(purchaseorder).executeRequest(erphttpdestination);
-    	PurchaseOrder purchaseorderoutput = po.getResponseEntity().get();
-    	
-    	logger.info("After Modify{}",purchaseorderoutput);
-    	
-        return  new ResponseEntity<PurchaseOrder>(purchaseorderoutput,HttpStatus.CREATED);
-    	}
-    	catch(DestinationAccessException destinationaccessexception) {
-    		logger.error(destinationaccessexception.getMessage(),destinationaccessexception);
-    		
-    		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    	}
-    	catch(ODataServiceErrorException odataServiceErrorException) {
-    		logger.error(odataServiceErrorException.getMessage());
-    		
-    		String httpbody = odataServiceErrorException.getHttpBody().get();
-    		
-    		 throw new ResponseStatusException(
-    				 odataServiceErrorException.getHttpCode(),httpbody, odataServiceErrorException);
-    		    
-    		
-    	}
-    	catch(Exception  exception) {
-    		logger.error(exception.getMessage(),exception);
-    		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    		
-    	}
-    }
+		try {
 
-    @RequestMapping(path = "/purchaseorder", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<PurchaseOrder> getpurchaseorder(@RequestParam String purchaseorderid) {
+			logger.info("Before Modify");
 
-    	try {
-    		logger.info("Before Fetch");
-    	PurchaseOrder receivedpurchaseorder = new DefaultPurchaseOrderService().getPurchaseOrderByKey(purchaseorderid).
-    			executeRequest(erphttpdestination);
-    	logger.info("After fetch {}",receivedpurchaseorder);
-        return ResponseEntity.ok(receivedpurchaseorder);
-    	}
-    	catch(DestinationAccessException destinationaccessexception) {
-    		logger.error(destinationaccessexception.getMessage(),destinationaccessexception);
-    		
-    		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    	}
-    	catch(ODataServiceErrorException odataServiceErrorException) {
-    		logger.error(odataServiceErrorException.getMessage());
-    		
-    		String httpbody = odataServiceErrorException.getHttpBody().get();
-    		
-    		 throw new ResponseStatusException(
-    				 odataServiceErrorException.getHttpCode(),httpbody, odataServiceErrorException);
-    		    
-    		
-    	}
-    	catch(Exception  exception) {
-    		
-    		
-    		logger.error(exception.getLocalizedMessage());
-    		
-   		 throw new ResponseStatusException(
-   				HttpStatus.INTERNAL_SERVER_ERROR, exception.getLocalizedMessage(), exception);	
-    		
-    	}
-    }
+			ModificationResponse<PurchaseOrder> po = new DefaultPurchaseOrderService()
+					.createPurchaseOrder(purchaseorder).executeRequest(erphttpdestination);
+			PurchaseOrder purchaseorderoutput = po.getResponseEntity().get();
+
+			logger.info("After Modify{}", purchaseorderoutput);
+
+			return new ResponseEntity<PurchaseOrder>(purchaseorderoutput, HttpStatus.CREATED);
+		} catch (DestinationAccessException destinationaccessexception) {
+			logger.error(destinationaccessexception.getMessage(), destinationaccessexception);
+
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		} catch (ODataServiceErrorException odataServiceErrorException) {
+			logger.error(odataServiceErrorException.getMessage());
+
+			String httpbody = odataServiceErrorException.getHttpBody().get();
+
+			throw new ResponseStatusException(odataServiceErrorException.getHttpCode(), httpbody,
+					odataServiceErrorException);
+
+		} catch (Exception exception) {
+			logger.error(exception.getMessage(), exception);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+
+		}
+	}
+
+	@RequestMapping(path = "/purchaseorder", method = RequestMethod.GET)
+	public @ResponseBody ResponseEntity<PurchaseOrder> getpurchaseorder(@RequestParam String purchaseorderid) {
+
+		try {
+			logger.info("Before Fetch");
+			PurchaseOrder receivedpurchaseorder = new DefaultPurchaseOrderService()
+					.getPurchaseOrderByKey(purchaseorderid).executeRequest(erphttpdestination);
+			logger.info("After fetch {}", receivedpurchaseorder);
+			return ResponseEntity.ok(receivedpurchaseorder);
+		} catch (DestinationAccessException destinationaccessexception) {
+			logger.error(destinationaccessexception.getMessage(), destinationaccessexception);
+
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		} catch (ODataServiceErrorException odataServiceErrorException) {
+			logger.error(odataServiceErrorException.getMessage());
+
+			String httpbody = odataServiceErrorException.getHttpBody().get();
+
+			throw new ResponseStatusException(odataServiceErrorException.getHttpCode(), httpbody,
+					odataServiceErrorException);
+
+		} catch (Exception exception) {
+
+			logger.error(exception.getLocalizedMessage());
+
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, exception.getLocalizedMessage(),
+					exception);
+
+		}
+	}
 }

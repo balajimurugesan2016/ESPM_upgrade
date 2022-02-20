@@ -2,7 +2,7 @@ package po.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@SuppressWarnings("PMD.UnusedPrivateField")
+
 public class HelloWorldResponse
 {
     @JsonProperty("hello")
