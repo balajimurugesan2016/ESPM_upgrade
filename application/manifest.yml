@@ -1,0 +1,16 @@
+---
+applications:
+
+- name: purchaseorderservice
+  memory: 1G
+  timeout: 300
+  random-route: true
+  path: ./application/target/purchase-application.jar
+  buildpacks:
+    - sap_java_buildpack
+  env:
+    TARGET_RUNTIME: tomee7
+    SET_LOGGING_LEVEL: '{ROOT: INFO, com.sap.cloud.sdk: INFO}'
+    SERVER_ERROR_INCLUDE_MESSAGE: 'always'
+  services:
+  - mydest
