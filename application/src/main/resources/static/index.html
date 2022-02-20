@@ -28,8 +28,35 @@
 
 
 <p>
-    You can create and view <strong>Purchase Orders</strong> With our Application
+    You can create and view <strong>Purchase Orders</strong> With your Application
 </p>
+
+<p>
+The following paths are served .
+</p>
+<p><strong>/materialsmanagement/purchaseorder</strong></p>
+<p>
+- GET and POST
+</p>
+<h5>Test Data</h5>
+<p><strong>POST</strong></p>
+<code>
+{
+    "PurchaseOrderType":"NB",
+    "Supplier":"USSU-VSF85",
+    "DocumentCurrency":"USD",
+    "PurchasingOrganization":"1710",
+    "PurchasingGroup":"002",
+    "CompanyCode":"1710",
+    "to_PurchaseOrderItem":[{
+        "Material":"MZ-TG-S100-03",
+        "OrderQuantity":1,
+        "OrderPriceUnit":"EA",
+        "Plant":"1710"
+    }]
+
+}
+</code>
 
 
 </body>

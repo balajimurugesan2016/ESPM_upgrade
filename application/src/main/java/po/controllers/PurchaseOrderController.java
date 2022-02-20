@@ -28,10 +28,6 @@ public class PurchaseOrderController {
 	@Autowired
 	ErpHttpDestination erphttpdestination;
 
-	
-
-	@Autowired
-	ResilienceConfiguration resilienceConfiguration;
 
 	private static final Logger logger = LoggerFactory.getLogger(PurchaseOrderController.class);
 

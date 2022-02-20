@@ -26,7 +26,7 @@ import com.sap.cloud.sdk.s4hana.datamodel.odata.services.DefaultPurchaseOrderSer
 public class GetPurchaseOrdersCommand 
 {
 	
-	 private static final Logger logger = LoggerFactory.getLogger(GetPurchaseOrdersCommand.class);
+	/* private static final Logger logger = LoggerFactory.getLogger(GetPurchaseOrdersCommand.class);
 	public Object execute(String purchaseorderid,ErpHttpDestination erphttpdestination,DefaultPurchaseOrderService defaultPurchaseOrderService) throws ODataServiceErrorException{
 		
 		return ResilienceDecorator.executeCallable(()->run(purchaseorderid,erphttpdestination,defaultPurchaseOrderService),  ResilienceConfiguration.of(DefaultPurchaseOrderService.class).isolationMode(ResilienceIsolationMode.TENANT_AND_USER_OPTIONAL).
@@ -78,7 +78,7 @@ public class GetPurchaseOrdersCommand
 	
 		
 	}
-
+*/
 
 
 
