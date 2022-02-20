@@ -28,8 +28,7 @@ public class PurchaseOrderController {
 	@Autowired
 	ErpHttpDestination erphttpdestination;
 
-	@Autowired
-	DefaultPurchaseOrderService defaultPurchaseOrderService;
+	
 
 	@Autowired
 	ResilienceConfiguration resilienceConfiguration;
@@ -43,7 +42,7 @@ public class PurchaseOrderController {
 
 			logger.info("Before Modify");
 
-			ModificationResponse<PurchaseOrder> po = defaultPurchaseOrderService.createPurchaseOrder(purchaseorder)
+			ModificationResponse<PurchaseOrder> po = new DefaultPurchaseOrderService().createPurchaseOrder(purchaseorder)
 					.executeRequest(erphttpdestination);
 			PurchaseOrder purchaseorderoutput = po.getResponseEntity().get();
 
@@ -75,7 +74,7 @@ public class PurchaseOrderController {
 		try {
 
 			logger.info("Before Fetch");
-			PurchaseOrder receivedpurchaseorder = defaultPurchaseOrderService.getPurchaseOrderByKey(purchaseorderid)
+			PurchaseOrder receivedpurchaseorder = new DefaultPurchaseOrderService().getPurchaseOrderByKey(purchaseorderid)
 					.executeRequest(erphttpdestination);
 			logger.info("After fetch {}",receivedpurchaseorder);
 

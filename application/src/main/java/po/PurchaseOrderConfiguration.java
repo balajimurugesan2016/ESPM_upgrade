@@ -20,15 +20,7 @@ public class PurchaseOrderConfiguration {
         return DestinationAccessor.getDestination("purchaseorderapi").asHttp().decorate(DefaultErpHttpDestination::new);
     }
 	
-	@Bean
-	public ResilienceConfiguration getResilenceDecorator() {
-		
-		return ResilienceConfiguration.of(DefaultPurchaseOrderService.class).isolationMode(ResilienceIsolationMode.TENANT_AND_USER_OPTIONAL).
-				
-				bulkheadConfiguration(ResilienceConfiguration.BulkheadConfiguration.of().maxConcurrentCalls(20));
-		
-		
-	}
+
 	
 
 
