@@ -87,11 +87,57 @@ public class IntegrationTest {
     		      .post("/materialsmanagement/purchaseorder")
     		      .content(asJsonString(purchaseorder))).andExpect(status().isCreated()); */
     		     
-    		   
-  
+    }
+    
+    
+    @Test
+    public void testPOSTPurchaseOrders400() throws Exception
+    {
+    	List<PurchaseOrderItem> purchaseorderitems = new ArrayList<>();
+    	BigDecimal _a = new BigDecimal("1");
+    	PurchaseOrderItem purchaseorderitem = new PurchaseOrderItem();
+    	purchaseorderitem.setMaterial("skjdsdajdadads");
+    	purchaseorderitem.setOrderQuantity(_a);
+    	purchaseorderitem.setOrderPriceUnit("EA");
+    	purchaseorderitem.setPlant("1710");
+    	purchaseorderitems.add(purchaseorderitem);
+    	PurchaseOrder purchaseorder = new PurchaseOrder();
+    	purchaseorder.setPurchaseOrderType("NB");
+    	purchaseorder.setSupplier("dsfsfsdfsfsfd");
+    	purchaseorder.setDocumentCurrency("USD");
+    	purchaseorder.setPurchasingOrganization("1710");
+    	purchaseorder.setPurchasingGroup("002");
+    	purchaseorder.setCompanyCode("1710");
+    	purchaseorder.setPurchaseOrderItem(purchaseorderitems);
+    	
+    	final String baseUrl = "http://localhost:"+randomServerPort+"/materialsmanagement/purchaseorder";
+    	URI uri = new URI(baseUrl);
+    	 HttpEntity<PurchaseOrder> request = new HttpEntity<>(purchaseorder);
+    	
+    	ResponseEntity<PurchaseOrder> result = this.restTemplate.postForEntity(uri, request, PurchaseOrder.class);
+    	Assert.assertEquals(400, result.getStatusCodeValue());
+    	
+    /*	mvc.perform( MockMvcRequestBuilders
+    			
+    		      .post("/materialsmanagement/purchaseorder")
+    		      .content(asJsonString(purchaseorder))).andExpect(status().isCreated()); */
+    		     
+    }
+    
+    
+    @Test
+    public void testGETPurchaseOrders404() throws Exception
+    {
+    	final String baseUrl = "http://localhost:"+randomServerPort+"/materialsmanagement/purchaseorder?purchaseorderid=45001124";
+    	URI uri = new URI(baseUrl);
+    	
+    	ResponseEntity<PurchaseOrder> result = this.restTemplate.getForEntity(uri, PurchaseOrder.class);
+
+        Assert.assertEquals(404,result.getStatusCodeValue());
                  
         
     }
+    
     
     public static String asJsonString(final Object obj) {
         try {
