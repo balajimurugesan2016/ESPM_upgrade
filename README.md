@@ -4,7 +4,7 @@ PurchaseOrderReference Application Java Extension S/4HANA cloud
 **Requirements to RUN the application**
 1) Maven Already installed
 
-
+**Steps to RUN the application**
 1) Download the application with git clone
 2) Navigate to the source folder
 3) Run Maven clean install, this will download the dependencies in your .m2 folder
