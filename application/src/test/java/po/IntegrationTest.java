@@ -17,8 +17,6 @@ import com.sap.cloud.sdk.s4hana.datamodel.odata.namespaces.purchaseorder.Purchas
 import com.sap.cloud.sdk.s4hana.datamodel.odata.namespaces.purchaseorder.PurchaseOrderItem;
 
 
-import junit.framework.Assert;
-
 import static org.junit.Assert.*;
 
 
@@ -50,12 +48,13 @@ public class IntegrationTest {
     	
     	ResponseEntity<PurchaseOrder> result = this.restTemplate.getForEntity(uri, PurchaseOrder.class);
 
-        Assert.assertEquals(200,result.getStatusCodeValue());
+    	assertEquals(200,result.getStatusCodeValue());
                  
         
     }
     
-    @Test
+    @SuppressWarnings("deprecation")
+	@Test
     public void testPOSTPurchaseOrders() throws Exception
     {
     	List<PurchaseOrderItem> purchaseorderitems = new ArrayList<>();
@@ -80,7 +79,9 @@ public class IntegrationTest {
     	 HttpEntity<PurchaseOrder> request = new HttpEntity<>(purchaseorder);
     	
     	ResponseEntity<PurchaseOrder> result = this.restTemplate.postForEntity(uri, request, PurchaseOrder.class);
-    	Assert.assertEquals(201, result.getStatusCodeValue());
+    	
+
+        assertEquals(201,result.getStatusCodeValue());
     	
     /*	mvc.perform( MockMvcRequestBuilders
     			
@@ -115,7 +116,7 @@ public class IntegrationTest {
     	 HttpEntity<PurchaseOrder> request = new HttpEntity<>(purchaseorder);
     	
     	ResponseEntity<PurchaseOrder> result = this.restTemplate.postForEntity(uri, request, PurchaseOrder.class);
-    	Assert.assertEquals(400, result.getStatusCodeValue());
+    	assertEquals(400, result.getStatusCodeValue());
     	
     /*	mvc.perform( MockMvcRequestBuilders
     			
@@ -133,7 +134,7 @@ public class IntegrationTest {
     	
     	ResponseEntity<PurchaseOrder> result = this.restTemplate.getForEntity(uri, PurchaseOrder.class);
 
-        Assert.assertEquals(404,result.getStatusCodeValue());
+       assertEquals(404,result.getStatusCodeValue());
                  
         
     }
