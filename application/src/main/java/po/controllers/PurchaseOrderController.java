@@ -8,6 +8,10 @@ import com.sap.cloud.sdk.s4hana.connectivity.ErpHttpDestination;
 import com.sap.cloud.sdk.s4hana.datamodel.odata.namespaces.purchaseorder.PurchaseOrder;
 import com.sap.cloud.sdk.s4hana.datamodel.odata.services.DefaultPurchaseOrderService;
 
+import po.Application;
+
+import java.util.HashMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +29,19 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/materialsmanagement")
 public class PurchaseOrderController {
 
-	@Autowired
+	
 	ErpHttpDestination erphttpdestination;
-
+	HashMap<String, RESTOPERATIONS> objectcollection;
 
 	private static final Logger logger = LoggerFactory.getLogger(PurchaseOrderController.class);
+	
+	@Autowired
+	public PurchaseOrderController(ErpHttpDestination erphttpdestination,HashMap<String, RESTOPERATIONS> objectcollection) {
+		
+		this.erphttpdestination = erphttpdestination;
+		this.objectcollection = objectcollection;
+		
+	}
 
 	@RequestMapping(path = "/purchaseorder", method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<PurchaseOrder> postpurchaseorder(@RequestBody PurchaseOrder purchaseorder) {
@@ -38,9 +50,9 @@ public class PurchaseOrderController {
 
 			logger.info("Before Modify");
 
-			ModificationResponse<PurchaseOrder> po = new DefaultPurchaseOrderService().createPurchaseOrder(purchaseorder)
-					.executeRequest(erphttpdestination);
-			PurchaseOrder purchaseorderoutput = po.getResponseEntity().get();
+			POSTRestOperations post = (POSTRestOperations) objectcollection.get("POPOST");
+
+			PurchaseOrder purchaseorderoutput = post.response(purchaseorder, erphttpdestination);
 
 			logger.info("After Modify,{}", purchaseorderoutput);
 
@@ -70,9 +82,12 @@ public class PurchaseOrderController {
 		try {
 
 			logger.info("Before Fetch");
-			PurchaseOrder receivedpurchaseorder = new DefaultPurchaseOrderService().getPurchaseOrderByKey(purchaseorderid)
-					.executeRequest(erphttpdestination);
-			logger.info("After fetch {}",receivedpurchaseorder);
+			
+			GETRestOperations get = (GETRestOperations) objectcollection.get("POGET");
+			
+			PurchaseOrder receivedpurchaseorder = get.response(purchaseorderid, erphttpdestination);
+			
+			logger.info("After fetch {}", receivedpurchaseorder);
 
 			return ResponseEntity.ok(receivedpurchaseorder);
 		}
