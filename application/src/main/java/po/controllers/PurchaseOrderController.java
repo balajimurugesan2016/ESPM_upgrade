@@ -29,73 +29,69 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/materialsmanagement")
 public class PurchaseOrderController {
 
-	
 	ErpHttpDestination erphttpdestination;
 	HashMap<String, RESTOPERATIONS> objectcollection;
 
 	private static final Logger logger = LoggerFactory.getLogger(PurchaseOrderController.class);
-	
+
 	@Autowired
-	public PurchaseOrderController(ErpHttpDestination erphttpdestination,HashMap<String, RESTOPERATIONS> objectcollection) {
-		
+	public PurchaseOrderController(ErpHttpDestination erphttpdestination,
+			HashMap<String, RESTOPERATIONS> objectcollection) {
+
 		this.erphttpdestination = erphttpdestination;
 		this.objectcollection = objectcollection;
-		
+
 	}
 
 	@RequestMapping(path = "/purchaseorder", method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<PurchaseOrder> postpurchaseorder(@RequestBody PurchaseOrder purchaseorder) {
+		PurchaseOrder receivedpurchaseorder = runOperations(null, purchaseorder);
 
-		try {
+		return new ResponseEntity<PurchaseOrder>(receivedpurchaseorder, HttpStatus.CREATED);
 
-			logger.info("Before Modify");
-
-			POSTRestOperations post = (POSTRestOperations) objectcollection.get("POPOST");
-
-			PurchaseOrder purchaseorderoutput = post.response(purchaseorder, erphttpdestination);
-
-			logger.info("After Modify,{}", purchaseorderoutput);
-
-			return new ResponseEntity<PurchaseOrder>(purchaseorderoutput, HttpStatus.CREATED);
-		} catch (DestinationAccessException destinationaccessexception) {
-			logger.error(destinationaccessexception.getMessage(), destinationaccessexception);
-
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-		} catch (ODataServiceErrorException odataServiceErrorException) {
-			logger.error(odataServiceErrorException.getMessage());
-
-			String httpbody = odataServiceErrorException.getHttpBody().get();
-
-			throw new ResponseStatusException(odataServiceErrorException.getHttpCode(), httpbody,
-					odataServiceErrorException);
-
-		} catch (Exception exception) {
-			logger.error(exception.getMessage(), exception);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-
-		}
 	}
 
 	@RequestMapping(path = "/purchaseorder", method = RequestMethod.GET)
 	public @ResponseBody ResponseEntity<PurchaseOrder> getpurchaseorder(@RequestParam String purchaseorderid) {
 
+		PurchaseOrder receivedpurchaseorder = runOperations(purchaseorderid, null);
+		return new ResponseEntity<PurchaseOrder>(receivedpurchaseorder, HttpStatus.OK);
+
+	}
+
+	private PurchaseOrder runOperations(String purchaseorderid, PurchaseOrder purchaseorder) {
 		try {
 
-			logger.info("Before Fetch");
-			
-			GETRestOperations get = (GETRestOperations) objectcollection.get("POGET");
-			
-			PurchaseOrder receivedpurchaseorder = get.response(purchaseorderid, erphttpdestination);
-			
-			logger.info("After fetch {}", receivedpurchaseorder);
+			if (purchaseorderid != null) {
 
-			return ResponseEntity.ok(receivedpurchaseorder);
+				logger.info("Before Fetch");
+
+				GETRestOperations get = (GETRestOperations) objectcollection.get("POGET");
+
+				PurchaseOrder receivedpurchaseorder = get.response(purchaseorderid, erphttpdestination);
+
+				logger.info("After fetch {}", receivedpurchaseorder);
+
+				return receivedpurchaseorder;
+
+			} else {
+				logger.info("Before Modify");
+
+				POSTRestOperations post = (POSTRestOperations) objectcollection.get("POPOST");
+
+				PurchaseOrder purchaseorderoutput = post.response(purchaseorder, erphttpdestination);
+
+				logger.info("After Modify,{}", purchaseorderoutput);
+				return purchaseorderoutput;
+
+			}
+
 		}
 
 		catch (DestinationAccessException destinationaccessexception) {
 			logger.error(destinationaccessexception.getMessage(), destinationaccessexception);
 
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+			throw new ResponseStatusException(500, "Internal Server error", destinationaccessexception);
 		} catch (ODataServiceErrorException odataServiceErrorException) {
 			logger.error(odataServiceErrorException.getMessage());
 
@@ -105,10 +101,11 @@ public class PurchaseOrderController {
 					odataServiceErrorException);
 
 		} catch (Exception exception) {
-			logger.error(exception.getMessage(), exception);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+
+			throw new ResponseStatusException(500, "Internal Server error", exception);
 
 		}
+
 	}
 
 }
